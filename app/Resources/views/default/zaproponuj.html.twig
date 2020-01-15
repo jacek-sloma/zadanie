@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Zaproponuj przystanek{% endblock %}
+
+{% block body %}
+<div class="container-md">
+    <h5>Zaproponuj Przystanek</h5>
+    <form>
+        <div class="form-group">
+          <label for="adres">Adres potencjalnego przystanku</label>
+          <input type="text" class="form-control" id="adres">
+        </div>
+        <div class="form-group">
+          <label for="opis">Opis i wyjaśnienia</label>
+          <textarea class="form-control" id="opis" rows="5"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="divzdjecie1">Wybierz/zrób zdjęcia (maksimum 3)</label>
+            <div class="custom-file mb-3" id="divzdjecie1">
+                    <input  onchange="showfile(1)" 
+                            type="file" 
+                            class="custom-file-input" 
+                            id="customFile1" 
+                            accept="image/*" 
+                            name="zdjecie1"
+                            >
+                    <style>#cflid1:after {content:"Wybierz"}</style>
+                    <label id="cflid1" class="custom-file-label" for="customFile">Wybierz/zrób zdjęcie</label>
+            </div>
+            <br>
+            <div class="custom-file mb-3 d-none" id="divzdjecie2">
+                <input  onchange="showfile(2)" 
+                        type="file" 
+                        class="custom-file-input" 
+                        id="customFile2" 
+                        accept="image/*" 
+                        name="zdjecie2"
+                        >
+                <style>#cflid2:after {content:"Wybierz"}</style>
+                <label id="cflid2" class="custom-file-label" for="customFile">Wybierz/zrób zdjęcie</label>
+            </div>
+            <br>
+            <div class="custom-file mb-3 d-none" id="divzdjecie3">
+                <input  onchange="showfile(3)" 
+                        type="file" 
+                        class="custom-file-input" 
+                        id="customFile3" 
+                        accept="image/*" 
+                        name="zdjecie3"
+                        >
+                <style>#cflid3:after {content:"Wybierz"}</style>
+                <label id="cflid3" class="custom-file-label" for="customFile">Wybierz/zrób zdjęcie</label>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Wyślij</button>
+      </form>
+</div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+
+<script>
+function showfile(ktory){
+    document.querySelector("#cflid"+ktory).innerText = document.querySelector("#customFile"+ktory).files[0].name;
+    if (ktory==1) {$("#divzdjecie2").removeClass("d-none");}
+    if (ktory==2) {$("#divzdjecie3").removeClass("d-none");}
+    
+}
+
+</script>
+
+{% endblock %}
