@@ -5,14 +5,20 @@
 {% block body %}
 <div class="container-md">
     <h5>Zaproponuj Przystanek</h5>
-    <form>
+    <form id="form1" action="zapiszpropozycje" method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <label for="adres">Adres potencjalnego przystanku</label>
-          <input type="text" class="form-control" id="adres">
+          <input type="text" class="form-control" id="adres" name="adres">
+          <div class="invalid-feedback">
+            Pole adresu musi być wypełnione.
+          </div>
         </div>
         <div class="form-group">
           <label for="opis">Opis i wyjaśnienia</label>
-          <textarea class="form-control" id="opis" rows="5"></textarea>
+          <textarea class="form-control" id="opis" name="opis" rows="5"></textarea>
+          <div class="invalid-feedback">
+            Proszę podać uzasadnienie i ewentualnie wyjaśnienia dotyczące adresu.
+          </div>
         </div>
         <div class="form-group">
             <label for="divzdjecie1">Wybierz/zrób zdjęcia (maksimum 3)</label>
@@ -52,7 +58,7 @@
                 <label id="cflid3" class="custom-file-label" for="customFile">Wybierz/zrób zdjęcie</label>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Wyślij</button>
+        <button id="fake" type="button" class="btn btn-primary">Wyślij</button>
       </form>
 </div>
 
@@ -63,6 +69,43 @@
 {{ parent() }}
 
 <script>
+  
+$(document).ready(function() {
+    //zapobieganie wysyłaniu formularza poprzez wciśnięcie entera ()
+    $('#adres').keydown(function(event){
+      if(event.keyCode == 13) {
+        event.preventDefault();
+        return false;
+      }
+    });
+
+    
+    $('#fake').click(function(event){ //walidacja
+      check = 0;
+      if($('#adres').val() == ""){
+          check = 1;
+          $("#adres").removeClass('is-valid');
+          $("#adres").addClass('is-invalid');
+      } else {
+          $("#adres").removeClass('is-invalid');
+          $("#adres").addClass('is-valid');
+      }
+      if($('#opis').val() == ""){
+        check = 1;
+        $("#opis").removeClass('is-valid');
+        $("#opis").addClass('is-invalid');
+      } else {
+        $("#opis").removeClass('is-invalid');
+        $("#opis").addClass('is-valid');
+      }
+
+      if(check==0) {$('#form1').submit();}
+    });
+  
+});
+
+
+//pokazywanie następnego pola do wyboru pliku, zrobienia zdjęcia
 function showfile(ktory){
     document.querySelector("#cflid"+ktory).innerText = document.querySelector("#customFile"+ktory).files[0].name;
     if (ktory==1) {$("#divzdjecie2").removeClass("d-none");}

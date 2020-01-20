@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Przeglądaj propozycje{% endblock %}
+
+{% block body %}
+<div class="container-md">
+    <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="align-middle" scope="col">#</th>
+            <th class="align-middle" scope="col">adres</th>
+            <th class="align-middle" scope="col">opis</th>
+            <th class="align-middle" scope="col">zdjecia</th>
+            <th class="align-middle" scope="col">data dodania</th>
+            <th scope="col"><img src="{{asset('eye.png')}}" style="width:50px;"></th>            
+          </tr>
+        </thead>
+        <tbody>
+        {% for przystanek in przystanki %}
+             <tr class="propozycja">
+                <th scope="row">{{przystanek.id}}</th>
+                <td>{{przystanek.adres}}</td>
+                <td>{{przystanek.opis|slice(0,32)}}</td>
+
+                <!-- Jeżeli użytkownik dodał chociaż jedno zdjęcie wyświetla "Tak" inaczek "Nie" -->
+                <td>{% if przystanek.zdjecie1 %}
+                    Tak
+                    {% else %}
+                    Nie
+                    {% endif %}
+                </td>
+                <td>{{przystanek.datadodania|date("Y-m-d")}}</td>
+                <td>{% if przystanek.czyodczytano==1 %}
+                    &check;
+                    {% else %}
+                    &cross;
+                    {% endif %}
+
+                </td>
+             </tr>
+            <tr class='d-none'>
+                <td colspan=3>{{przystanek.opis}}</td>
+                <td>{% if przystanek.zdjecie1 %}{{przystanek.zdjecie1}}{% else %}brak{% endif %}</td>
+                <td>{% if przystanek.zdjecie2 %}{{przystanek.zdjecie2}}{% else %}brak{% endif %}</td>
+                <td>{% if przystanek.zdjecie3 %}{{przystanek.zdjecie3}}{% else %}brak{% endif %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+
+
+
+
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    wiersze = document.getElementsByClassName('propozycja');
+    $(document).ready(function(){
+        for (i=0;i<wiersze.length;i++){
+            wiersze[i].addEventListener("click",pokazszczegoly);
+        }
+      });
+    function pokazszczegoly(event){
+        wiersz = event.target.parentNode.nextElementSibling;
+        for (j=1;j<4;j++){
+            if (wiersz.children[j].innerText != "brak"){
+                wiersz.children[j].innerHTML = "<a href='zdjecia/"+wiersz.children[j].innerText.trim()+"'><img src='zdjecia/"+wiersz.children[j].innerText.trim()+"'  style='width:100px;'>";
+                }
+        }
+        $(wiersz).removeClass("d-none");
+        event.target.parentNode.lastElementChild.innerHTML="&check;";
+        idpropozycji = parseInt(event.target.parentNode.firstElementChild.innerText.trim());
+        fetch("/przeczytano/"+idpropozycji, {
+            method: 'POST',
+        });
+        event.target.parentNode.removeEventListener("click",pokazszczegoly);
+
+    }
+</script>
+
+{% endblock %}
+
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .propozycja:hover {
+        background:whitesmoke;
+        cursor:pointer;
+    }
+    
+</style>
+{% endblock %}
